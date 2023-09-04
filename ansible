@@ -1,0 +1,118 @@
+
+-> hosts
+Настройка подключения ssh по ключу
+-> подключаемся вручную по ssh, предварительно разрешив руту ssh
+/etc/ssh/ssh_config - настройки ssh клиента
+
+Remote
+/etc/ssh/sshd_config - настройки ssh сервера
+#Authentication
+PermitRootLogin yes
+systemctl restart sshd
+
+Local 
+ssh-keygen 
+ssh-copy-id root@remote
+
+
+ansible all -m ping
+
+- Создаем плэйбук
+vim serial.yml
+
+```python
+---
+
+- hosts: all
+
+  tasks:
+
+    - name: Collect facts about PC
+
+    package_facts:
+
+      manager: rpm
+
+    - name : Render template
+
+      template:
+
+        scr: ./templates/serial.tpl
+
+        dest: "{{ ansible_facts.fqdn }}.yml"
+
+    - name: Download template
+
+      fetch:
+
+        src: "{{ ansible_facts.fqdn }}.yml"
+
+        dest: "./PC_INFO/"
+
+        flat: yes
+```
+
+mkdir templates/
+nano serial.tpl
+```python
+{% set errot = 'Программа не установлена' %}
+Имя компьютера: {{hostvars[inventory_hostname]['ansible_facts']['fqdn']}}
+Сетевой адрес компьютера: {{hostvars[inventory_hostname]['ansible_facts']['default_ipv4']['address']}}
+{% if hostvars[inventory_hostname]['ansible_facts']['packages']['vim'] is defined %}
+Vim версия: {{hostvars[inventory_hostname]['ansible_facts']['packages']['vim'][0].version}}
+{% else %}
+Vim версия: {{error}}
+{% if hostvars[inventory_hostname]['ansible_facts']['packages']['chromium'] is defined %}
+chromium версия: {{hostvars[inventory_hostname]['ansible_facts']['packages']['chromium'][0].version}}
+{% else %}
+chromium версия: {{error}}
+```
+rpm -qa  |  grep 'vim'
+
+
+
+
+
+ansible-galaxy collection install cisco.ios
+
+---
+hosts: switches
+tasks: 
+- name: get conf and save
+- ios_config:
+- backup: yes
+- backup_options:
+-    filename: {{ ansible_net_hostname}} {{ ansible_host}}.cfg"
+-    dir_path: "./SWITCH_INFO/"
+
+
+routers 
+hosts: routers
+tasks:
+-name  Get conf and save
+ fetch:
+    src: /etc/frr/frr.conf
+    dest: "./NET_INFO/{{ ansible_facts.fqdn }}.cfg"
+    flat: yes
+
+
+
+hosts 
+
+[switches]
+192.168.1.250
+
+
+[shitches:vars]
+ansible_user = cisco
+ansible_password = cisco
+ansible_connection = ansible.netcommon.network_cli
+ansible_network_os = cisco.ios.ios
+
+
+
+ssh.conf
+
+host 192.168.1250
+	    KexAlgorithms=+diffie-hellman-group1=sha1
+	    HostKeyAlgorithms=+ssh-rsa
