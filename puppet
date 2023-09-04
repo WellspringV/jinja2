@@ -1,0 +1,188 @@
+порт 8140
+точное время
+DNS Сервер
+RAM edit 8192 off/on
+free -mh
+yum install puppetserver -y
+
+systemctl start puppetserver
+systemctl statys puppetserver
+
+
+
+
+CLIENTS
+yum install puppet-agent
+
+ping hq-srv1.company.work (DNS!)
+
+/etc/puppetlabs/puppet/puppet.conf
+server = hq-srv1.company.work
+show_diff = true
+
+systemctl start puppet
+/opt/puppetlabs/puppet/bin/puppet agent -tv
+
+
+Server
+/etc/hosts add puppet 1-2 str
+10.1.1.150 puppet hq-srv1.company.work
+#проверка порта ss -natu | grep 8140
+
+/opt/puppetlabs/bin/puppetserver ca list
+
+sudo /opt/puppetlabs/bin/puppetserver ca sign --certname  br-srv1.branch.company.work
+
+CLIENTS
+/opt/puppetlabs/puppet/bin/puppet agent -tv
+
+
+Server
+nano /etc/puppetlabs/puppet/autosign.conf
+zvezdochka.company.work
+systemctl restart puppetserver
+/opt/puppetlabs/bin/puppetserver ca list -- all
+
+
+
+MANIFEST
+
+cd /etc/puppetlabs/code/enviroments/production/
+cd /manitfests
+
+/etc/puppetlabs/puppet/fileserver.conf
+[files]
+path /etc/puppetlabs/code/files
+allow * 
+
+mkdir /ets/puppetlabs/code/files
+
+systemctl restart puppetserver
+
+cp /usr/share/applications/chromium-browser.desctop /ets/puppetlabs/code/files/
+cd /ets/puppetlabs/code/files/
+mv  chromium-browser.desctop company-website.desctop
+nano company-website.desctop
+ name ru Корпоративный сайт
+ exec=/usr/bin/chromium-browser https://www.company.work --auth-server-whitelist=''www.company.work" --auth-negotiate-delegate-whitelist="www.company.work"
+
+nano shortcut.sh
+#!/bin/bash
+cp /usr/share/applications/company-website.desctop $HOME/Рабочий\ стол/
+
+
+nano /etc/puppetlabs/code/env../prod.../manifests/shortcut.pp
+
+file {'Deply Shortcut':
+ensure => file,
+path =>'/usr/share/applications/company-website.desctop',
+source => 'puppet:///files/company-website.desktop',
+mode => '0766',
+owner =>'root',
+group=>'root',
+}
+
+file {'Deply Script':
+ensure => file,
+path =>'/etc/profile.d/shortcut.sh',
+source => 'puppet:///files/shortcut.sh',
+mode => '0777',
+owner =>'root',
+group=>'root',
+}
+
+
+client 
+/opt/puppetlabs/puppet/bin/puppet agent -tv
+
+
+
+
+
+
+
+
+
+
+nano site.pp
+
+node /-cli1/ {
+	include base
+	include client
+}
+
+node /-srv1/ {
+	include base 
+	include servers
+}
+
+mkdir base
+mv shortcut.sh base/
+
+nano class.pp
+
+
+class client {
+package {'doublecmd':
+ensure=> latest,
+provider=> dnf,
+}
+
+ user {'PCAdmin':
+ ensure=>present,
+ home => ''/home/PCAdmin',
+ managehome => 'true',
+ groups => 'wheel',
+ shell => ''/bin/bash',
+  password => '' cmd openssl passwd >> client.pp
+ }
+ }
+
+class server {
+	package {'tftp':
+	ensure => latest,
+	provider => 'dnf'}
+	package {'rsyslog':
+	ensure => latest,
+	provider => 'dnf'}
+}
+}
+
+file {'SSHD CONFIG':
+	ensure => file, 
+	path=> ''/etc/ssh/sshd_config',
+	owner => 'root',
+	group => 'root',
+	mode => '0600',	
+	}
+
+service {'sshd':
+	ensure => 'running',
+	subscribe =>  FILE['SSHD_CONFIG'],
+}
+
+user {'SRVAdmin'
+	username => present,
+	groups => 'wheel',
+	home => '/home/SRVAdmin',
+	managehome => 'true',
+	shell => '/bin/bash'
+	passwd...
+	}
+}
+
+}
+
+class base {
+include base
+}
+
+
+cp /etc/ssh/sshd_config /etc/puppetlabs/code/files
+nano /etc/puppetlabs/code/files/sshd_config -> 
+# authent
+Allowusers root SRVAdmin
+PermitRootLogin  yes
+
+
+chmod 777  /etc/puppetlabs/code/files/**
