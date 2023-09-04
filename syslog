@@ -1,0 +1,47 @@
+/etc/rsyslog.cong
+uncomment  Provides
+RULES
+if $hostname contains 'BR-SRV1' or  $fromhost-ip contains 192.168.1.150 then {
+	*.err /opt/logs/BR-SRV1/error.log
+}
+
+systemctl restart rsyslog
+logger  -p auth.err 123123
+
+
+/etc/selinux/config
+SELINUX =disabled
+reboot
+
+SWITCHES 
+logging ?host? 192.168.1.150
+logging traps error
+ip add 192.168.1.250 255.255.255.9
+ip route 0.0.0.0  0.0.0.0 192.168.1.1
+
+DEBIAN 
+/etc/rsyslog.cong
+RULES 
+\*.*  @192.168.1.150
+
+
+ROTATE
+/etc/logrotate.conf .. comment dateext#
+nano /etc/logrotate.d/mylog
+
+/opt/logs/BR-SRV1/error.log {
+		rotate 3
+		size 10M
+		compress
+		delaycompress
+		missingok
+		notifempty
+		create 0644 root root
+}
+
+systemctl restart logrotate service
+
+cat /dev/urandom > err.log
+logrotate /etc/logrotate.conf
+
+	/*1 * * * * root logrotate /etc/logrotate.conf
