@@ -1,0 +1,22 @@
+autoautoapt install strongswan -y
+
+nano /etc/ipsec.conf
+config setup
+conn vpn 
+	auto = start
+	type=tunnel
+	authby=secret
+	left=2.2.1.2
+	right=34.19.99.100
+	leftsubnet=0.0.0.0/0
+	rightsubnet=0.0.0.0/0
+	leftprotoport=gre
+	rightprotoport=gre
+	ike=aes128-sha256-modp3072
+	esp=aes128-sha256
+
+nano /etc/ipsec.secrets
+
+2.2.1.2 34.19.99.100  : PSK "P@ssw0rd"
+ipsec restart
+ipsec status
