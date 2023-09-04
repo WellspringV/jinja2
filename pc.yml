@@ -1,0 +1,15 @@
+---
+- hosts: all
+  tasks:
+    - name: Collect facts about PC
+      package_facts:
+        manager: rpm
+    - name: Render template
+      template:
+        src: ./templates/serial.tpl
+        dest: "{{ ansible_facts.fqdn }}.yml"
+    - name: Download Template
+      fetch:
+        src: "{{ ansible_facts.fqdn }}.yml"
+        dest: "./PC_INFO/"
+        flat: yes
