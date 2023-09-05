@@ -1,0 +1,22 @@
+:set number
+yum install asterisk
+/etc/astesisk/modules.conf
+
+noload = chan_pjsip.so
+
+/asterisk/users.conf
+[2001]
+secret=2001
+host=dynamic
+context = wsr23
+
+[2002]
+secret=2002
+host=dynamic
+context = wsr24
+:[6000]
+
+atsterisk/extension/ext..conf
+[wsr23]
+exten => _200X!,1,Dial(SIP/${EXTEN})
+[context]
