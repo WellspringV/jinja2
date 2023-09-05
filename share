@@ -1,0 +1,36 @@
+yum install samba
+install nfs-server
+
+mkdir /opt/Shares/workfolders - /work1 /work2
+/etc/samba/smp.conf
+ [global]
+
+server role = standalone
+	security = user
+workgroup = default
+	passdb backend = tdbsam
+	# to guest = bad user
+[Work]
+	browseable = yes
+	path = /opt/Shares/workfolders
+	guest ok = yes
+	read only = no
+
+useradd user
+passwd user
+smbpasswd -a user
+-> parol
+
+
+cli -> yum install samba
+home mkdir /work
+
+/etc/fstab
+//ipserv/Work /work cifs user,rw,credentials/root/cred 0 0
+nano cred
+user=user
+password=pass
+
+mount -a //проверка монтирования
+install cifs utils
+
