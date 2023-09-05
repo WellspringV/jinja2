@@ -1,0 +1,72 @@
+apt --fix-broken
+apt install --fix-broken zabbix-serve
+var/log/zabbix
+
+sudo -u postgress psql
+sudo -u zabbix psql
+\dt
+\q
+drop owned by zabbix cascade;
+
+BR-RTR 
+apt install zabbix-server-pgsql
+apt install postgresql
+BR-SRV01
+dnf install zabbix-server-pgsql
+apt install postgresql
+apt search zabbix
+apt purge ... -удалить с конфиг файлами
+
+
+1. BR-RTR Создание пользователя
+# apt install sudo
+sudo -u postgres createuser --pwprompt zabbix
+->P@ssw0rd
+
+sudo -u postgres createdb -O zabbix -E Unicode -T template0 zabbix
+zcat /usr/share/doc/zabbix-server-pgsql/create_sql.gz | sudo -u zabbix psql zabbix
+#zcat /usr/share/zabbix-server-pgsql/schema.sql.gz | sudo -u zabbx psql zabbix
+#zcat /usr/share/zabbix-server-pgsql/data.sql.gz | sudo -u zabbix psql zabbix
+
+nano /etc/postgresql/11?/main/pg_hba.conf
+-> в самый низ
+IPV4 local connetions
+host all all 192.169.0.20/32 <- адрес заббикс сервера - trust
+
+nano /etc/postgresql/12/main/postgresql.conf
+
+
+
+графика на дебиане startx
+systemctl set-default graphical.target
+CONNECTIONS AND AUTHE..
+connection settings
+listen_addresses = адрес серера заббикс
+
+systemctl restart postgresql
+
+2. BR...
+install zabbix-server-pgsql zabbix-fronntend-php  php7.4-pgqsl zabbix-appache zabbix-agent (без апач конф)
+
+nano /etc/zabbix/zabbix_server.conf
+listen_port - не меняем
+source_ip - не меняем
+DBHOST=ip RTR
+DBName, user - не меняем
+DBPassword = P@ssw0rd
+
+wget https://repo.zabbix.com/zabbix/5.0/debian/pool/main/z/zabbix-release/zabbix-release_5.0-1+buster_all.deb
+sudo dpkg -i zabbix-release_5.0-1+buster_all.deb
+apt update
+apt upgrade
+systemctl start zabbix-server zabbix-agent apache2 # php7.3
+systemctl status zabbix-server zabbix-agent apache2
+
+
+
+
+
+
+
+
+
