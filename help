@@ -1,0 +1,7 @@
+terraform apply [options] ./path-to-dir
+or
+terraform -chdir="./path-to-dir" apply
+
+export PATH="/home/ubuntu/bin/:$PATH"
+
+/home/ubuntu/vkcs_provider.tf
