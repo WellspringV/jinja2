@@ -1,3 +1,28 @@
 https://docs.eltex-co.ru/pages/viewpage.action?pageId=107481518#id-%D0%A3%D0%BF%D1%80%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5%D1%82%D1%83%D0%BD%D0%BD%D0%B5%D0%BB%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%D0%BC-%D0%9D%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B0IPsecVPN
 
 https://adminwin.ru/nastroyka-source-nat-na-eltex/
+
+hostname RTR1
+domain name company.prof
+
+ip dhcp-server
+ip dhcp-server pool vlan100
+network 10.0.10.0/27
+address-range 10.0.10.10-10.0.10.20
+default-router 10.0.10.1
+domain-name company.prof
+end
+commit
+confirm
+save
+
+configure
+syslog host SRV1
+remote-address 10.0.10.10
+transport udp
+severity debug
+port 514
+end
+commit
+confirm
+save
