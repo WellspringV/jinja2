@@ -1,1 +1,3 @@
-S
+
+ansible 192.168.0.100 -m copy -a "src=/home/user/file.txt dest=/tmp/file.txt"
+ansible 192.168.0.100 -m shell -a "cat resolv conf"
