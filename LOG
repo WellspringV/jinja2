@@ -1,0 +1,6 @@
+rm -rf /var/www/html/*
+tar xvf loganalyzer.tar.gz
+mv loganalyzer/src/* /var/www/html/
+touch /var/www/html/config.php
+chmod 666 config.php
+chown www-data:www-data /var/www/html/* -R
