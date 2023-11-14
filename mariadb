@@ -1,0 +1,63 @@
+Вот пример YAML-файла для конфигурации базы данных MariaDB в Kubernetes:
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mariadb-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mariadb
+spec:
+  selector:
+    app: mariadb
+  ports:
+    - port: 3306
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mariadb
+spec:
+  selector:
+    matchLabels:
+      app: mariadb
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mariadb
+    spec:
+      containers:
+        - name: mariadb
+          image: mariadb:latest
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: your_password
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: mariadb-persistent-storage
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: mariadb-persistent-storage
+          persistentVolumeClaim:
+            claimName: mariadb-pvc
+```
+
+Примечания:
+- Проверьте изображение `mariadb:latest`, чтобы убедиться, что оно соответствует вашим требованиям.
+- Замените `your_password` на фактический пароль для базы данных MariaDB.
+
+Вы можете сохранить этот YAML-файл и создать объекты Kubernetes с помощью команды `kubectl apply -f имя_файла.yml`. Это создаст PersistentVolumeClaim, Service и Deployment, необходимые для запуска и настройки базы данных MariaDB в Kubernetes.
+
+ Убедитесь, что вы имеете установленный Kubernetes кластер и утилиту kubectl настроенную для взаимодействия с вашим кластером, прежде чем применять этот файл конфигурации.
