@@ -1,0 +1,49 @@
+Вот пример YAML-файла для конфигурации базы данных Redis в Kubernetes:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+spec:
+  selector:
+    app: redis
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:latest
+          ports:
+            - containerPort: 6379
+          volumeMounts:
+            - name: redis-persistent-storage
+              mountPath: /data
+      volumes:
+        - name: redis-persistent-storage
+          emptyDir: {}
+```
+
+Примечания:
+- Проверьте image `redis:latest`, чтобы убедиться, что оно соответствует вашим требованиям.
+- По умолчанию в примере используется пустой том (`emptyDir`), который представляет временное хранилище. При необходимости можете настроить постоянное хранилище, такое как PersistentVolumeClaim.
+
+Вы можете сохранить этот YAML-файл и создать объекты Kubernetes с помощью команды `kubectl apply -f имя_файла.yml`. Это создаст Service и Deployment для запуска и настройки базы данных Redis в Kubernetes.
+
+ Убедитесь, что вы имеете установленный Kubernetes-кластер и утилиту kubectl, настроенную для взаимодействия с вашим кластером, прежде чем применять этот файл конфигурации.
