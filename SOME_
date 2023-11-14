@@ -1,3 +1,29 @@
 
 ansible 192.168.0.100 -m copy -a "src=/home/user/file.txt dest=/tmp/file.txt"
 ansible 192.168.0.100 -m shell -a "cat resolv conf"
+
+
+hostname -f rtr, sw,cicd
+sh ip int <27
+SRV ssh passwdauth no port 2023
+CLI SSHuser -> SRV
+
+
+lvdisplay
+df -h
+lsblk -fs
+
+ovs-vsctl show
+
+sudo -u postgres psql -h localhost  \l prod test user
+sudo -u postgres psql -h IP_SRV_BR -U dbadmin -d prod
+
+cli HD - web db adm
+
+netstat -tulnp | grep syslog
+BD LOGS select * from systemevents
+CLI-HQ -> log analyzer web
+CLI HQ -> monitoring web admin:P@ssw0rd  узлы сети, информация  о системе
+
+
+CLI HQ host cli - ...company.prof
